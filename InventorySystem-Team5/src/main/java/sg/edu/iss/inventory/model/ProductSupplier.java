@@ -3,29 +3,21 @@ package sg.edu.iss.inventory.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-@Entity
-@IdClass(ProductSupplierId.class)
+@Entity(name="ProductSupplier")
 @Table(name = "productsupplier")
 public class ProductSupplier implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "partNo")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String partNo;
-	@Id
-	@Column(name = "supplierId")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String supplierId;
+	
+	@EmbeddedId
+	private ProductSupplierId id;
+	
 	@Column(name = "unitPrice")
 	private double unitPrice;
 	@Column(name = "minimumReorderQty")
@@ -36,28 +28,19 @@ public class ProductSupplier implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public ProductSupplier(String partNo, String supplierId, double unitPrice, int minimumReorderQty) {
+	public ProductSupplier(ProductSupplierId id, double unitPrice, int minimumReorderQty) {
 		super();
-		this.partNo = partNo;
-		this.supplierId = supplierId;
+		this.id = id;
 		this.unitPrice = unitPrice;
 		this.minimumReorderQty = minimumReorderQty;
 	}
 
-	public String getPartNo() {
-		return partNo;
+	public ProductSupplierId getId() {
+		return id;
 	}
 
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
-	}
-
-	public String getSupplierId() {
-		return supplierId;
-	}
-
-	public void setSupplierId(String supplierId) {
-		this.supplierId = supplierId;
+	public void setId(ProductSupplierId id) {
+		this.id = id;
 	}
 
 	public double getUnitPrice() {
@@ -84,8 +67,7 @@ public class ProductSupplier implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((partNo == null) ? 0 : partNo.hashCode());
-		result = prime * result + ((supplierId == null) ? 0 : supplierId.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -98,23 +80,14 @@ public class ProductSupplier implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		ProductSupplier other = (ProductSupplier) obj;
-		if (partNo == null) {
-			if (other.partNo != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!partNo.equals(other.partNo))
-			return false;
-		if (supplierId == null) {
-			if (other.supplierId != null)
-				return false;
-		} else if (!supplierId.equals(other.supplierId))
+		}
+		else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
 
-	
-	
-	
-
-	
 
 }

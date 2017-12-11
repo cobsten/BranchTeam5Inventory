@@ -1,18 +1,24 @@
 package sg.edu.iss.inventory.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sg.edu.iss.inventory.exception.DuplicatePartNumException;
 import sg.edu.iss.inventory.exception.MismatchPartNumException;
+import sg.edu.iss.inventory.model.Order;
 import sg.edu.iss.inventory.model.OrderCartItem;
 import sg.edu.iss.inventory.model.Product;
 import sg.edu.iss.inventory.model.ProductSupplier;
+import sg.edu.iss.inventory.model.Supplier;
+import sg.edu.iss.inventory.model.User;
 import sg.edu.iss.inventory.repository.OrderRepository;
 import sg.edu.iss.inventory.repository.ProductRepository;
 import sg.edu.iss.inventory.repository.ProductSupplierRepository;
+import sg.edu.iss.inventory.repository.SupplierRepository;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -23,6 +29,8 @@ public class OrderServiceImpl implements OrderService {
 	private ProductRepository productRepository;
 	@Resource
 	private ProductSupplierRepository productSupplierRepository;
+	@Resource
+	private SupplierRepository supplierRepository;
 
 	@Override
 	@Transactional
@@ -104,4 +112,21 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return toOrderQty;
 	}
+//	@Transactional
+//	public void createOrders(User user, ArrayList<OrderCartItem> orderList ) {
+//		HashSet<String> supplierList = new HashSet<String>();
+//		for(OrderCartItem x:orderList) {
+//			supplierList.add(x.getSelectedSupplierId());
+//		}
+//		for(String supplierName:supplierList) {
+//			Supplier supplier = supplierRepository.findSupplierBysupplierId(supplierName);
+//			Order order=new Order();
+//			order.setSupplier(supplier);
+//			order.setUser(user);
+//			orderRepository.saveAndFlush(order);
+//			for()
+//			
+//			
+//		}
+//	}
 }
