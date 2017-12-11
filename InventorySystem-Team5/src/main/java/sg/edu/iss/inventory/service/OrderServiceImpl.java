@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sg.edu.iss.inventory.exception.DuplicatePartNumException;
 import sg.edu.iss.inventory.exception.MismatchPartNumException;
-import sg.edu.iss.inventory.model.OrderDetail;
+import sg.edu.iss.inventory.model.OrderCartItem;
 import sg.edu.iss.inventory.model.Product;
 import sg.edu.iss.inventory.model.ProductSupplier;
 import sg.edu.iss.inventory.repository.OrderRepository;
@@ -25,72 +25,71 @@ public class OrderServiceImpl implements OrderService {
 	@Resource
 	private ProductSupplierRepository productSupplierRepository;
 
-	// Update HashMap with another product and Productsupplier
-	@Override
-	@Transactional
-	public HashMap<Product, ArrayList<ProductSupplier>> getToOrderMap() {
-		HashMap<Product, ArrayList<ProductSupplier>> toOrderMap = new HashMap<Product, ArrayList<ProductSupplier>>();
+	public ArrayList<OrderCartItem> createToOrderList() throws MismatchPartNumException {
+		ArrayList<OrderCartItem> orderList = new ArrayList<OrderCartItem>();
 		ArrayList<Product> prodList = productRepository.findProductsToReorder();
-		if (!prodList.isEmpty())
+		if (!prodList.isEmpty()) {
 			for (Product x : prodList) {
 				ArrayList<ProductSupplier> psList = productSupplierRepository
 						.findProductSupplierByProductId(x.getPartNo());
-				toOrderMap.put(x, psList);
+				if (!psList.isEmpty()) {
+					OrderCartItem orderCartItem = new OrderCartItem(x, psList, 0);
+					orderCartItem.setQuantity(qtyLowUnitPrice(orderCartItem));
+					orderList.add(orderCartItem);
+				}
 			}
-		return toOrderMap;
-	}
-
-	@Override
-	@Transactional
-	public HashMap<Product, ArrayList<ProductSupplier>> addPartToOrder(Product product,
-			HashMap<Product, ArrayList<ProductSupplier>> toOrderMap) throws DuplicatePartNumException {
-		if (toOrderMap.get(product) != null) {
-			throw new DuplicatePartNumException();
-		} else {
-			toOrderMap.put(product, productSupplierRepository.findProductSupplierByProductId(product.getPartNo()));
 		}
-		return toOrderMap;
+		return orderList;
 	}
 
-	@Override
 	@Transactional
-	public OrderDetail computeQty(Product product, ProductSupplier productSupplier) throws MismatchPartNumException {
-		if (product.getPartNo().equalsIgnoreCase(productSupplier.getPartNo())) {
+	public void addToOrderList(Product product, ArrayList<OrderCartItem> orderList)throws DuplicatePartNumException,MismatchPartNumException{
+		for(OrderCartItem x:orderList) {
+			if(x.getProduct().getPartNo().equalsIgnoreCase(product.getPartNo())) {
+				throw new DuplicatePartNumException();
+			}
+			else {
+				ArrayList<ProductSupplier> psList = productSupplierRepository.findProductSupplierByProductId(product.getPartNo());
+				OrderCartItem orderCartItem = new OrderCartItem(product,psList,0);
+				orderCartItem.setQuantity(qtyLowUnitPrice(orderCartItem));
+				orderList.add(orderCartItem);
+			}
+		}
+		return;
+	}
+	
+
+	@Transactional
+	public int qtyLowUnitPrice(OrderCartItem orderCartItem) throws MismatchPartNumException {
+		ProductSupplier prodSup = null;
+		int qty=0;
+		if (orderCartItem.getProdSupList().isEmpty()) {throw new MismatchPartNumException();}
+		else {
+			for (ProductSupplier ps : orderCartItem.getProdSupList()) {
+				if (prodSup == null || prodSup.getUnitPrice() > ps.getUnitPrice()) {
+					prodSup = ps;
+				}
+			}
+			qty=computeQty(orderCartItem.getProduct(), prodSup);
+		}
+		return qty;
+		
+	}
+
+	public int computeQty(Product product, ProductSupplier ps) throws MismatchPartNumException {
+		// TODO Auto-generated method stub
+		// for Cheapest
+		int toOrderQty = 0;
+		if (!product.getPartNo().equalsIgnoreCase(ps.getPartNo())) {
 			throw new MismatchPartNumException();
 		}
-		int toOrderQty = 0;
 		if (product.getAvailableQty() < product.getReorderLevel()) {
-			if ((productSupplier.getMinimumReorderQty() + product.getAvailableQty()) > product.getReorderLevel()) {
-				toOrderQty = productSupplier.getMinimumReorderQty() + product.getAvailableQty();
+			if ((ps.getMinimumReorderQty() + product.getAvailableQty()) > product.getReorderLevel()) {
+				toOrderQty = ps.getMinimumReorderQty() + product.getAvailableQty();
 			} else {
 				toOrderQty = product.getReorderLevel() - product.getAvailableQty() + 1;
 			}
 		}
-		OrderDetail a = new OrderDetail(0, product.getPartNo(), toOrderQty);
-		return a;
-	}
-
-	@Override
-	@Transactional
-	public HashMap<Product, OrderDetail> getAllOrderLowPrice(HashMap<Product, ArrayList<ProductSupplier>> toOrderMap)
-			throws MismatchPartNumException {
-		HashMap<Product, OrderDetail> hm = new HashMap<Product, OrderDetail>();
-		for (Product p : toOrderMap.keySet()) {
-			double lowestPrice = 0;
-			ProductSupplier temp;
-			ArrayList<ProductSupplier> psList = toOrderMap.get(p);
-			if (!psList.isEmpty()) {
-				temp = psList.get(0);
-				for (ProductSupplier ps : psList) {
-					if (lowestPrice == 0 || lowestPrice > ps.getUnitPrice()) {
-						temp = ps;
-						lowestPrice = ps.getUnitPrice();
-					}
-				}
-				OrderDetail od = computeQty(p, temp);
-				hm.put(p, od);
-			}
-		}
-		return hm;
+		return toOrderQty;
 	}
 }
