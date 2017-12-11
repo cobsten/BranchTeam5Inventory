@@ -1,7 +1,6 @@
 package sg.edu.iss.inventory.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
