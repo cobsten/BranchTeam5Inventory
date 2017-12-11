@@ -11,10 +11,13 @@ import sg.edu.iss.inventory.exception.DuplicatePartNumException;
 import sg.edu.iss.inventory.exception.MismatchPartNumException;
 import sg.edu.iss.inventory.model.Order;
 import sg.edu.iss.inventory.model.OrderCartItem;
+import sg.edu.iss.inventory.model.OrderDetail;
+import sg.edu.iss.inventory.model.OrderDetailId;
 import sg.edu.iss.inventory.model.Product;
 import sg.edu.iss.inventory.model.ProductSupplier;
 import sg.edu.iss.inventory.model.Supplier;
 import sg.edu.iss.inventory.model.User;
+import sg.edu.iss.inventory.repository.OrderDetailRepository;
 import sg.edu.iss.inventory.repository.OrderRepository;
 import sg.edu.iss.inventory.repository.ProductRepository;
 import sg.edu.iss.inventory.repository.ProductSupplierRepository;
@@ -31,6 +34,8 @@ public class OrderServiceImpl implements OrderService {
 	private ProductSupplierRepository productSupplierRepository;
 	@Resource
 	private SupplierRepository supplierRepository;
+	@Resource
+	private OrderDetailRepository orderDetailRepository;
 
 	@Override
 	@Transactional
@@ -90,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			qty=computeQty(product, prodSup);
 		}
-		return new OrderCartItem(product,prodSupList,prodSup.getSupplierId(),qty);
+		return new OrderCartItem(product,prodSupList,prodSup.getId().getSupplierId(),qty);
 		
 	}
 	
@@ -100,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		// for Cheapest
 		int toOrderQty = 0;
-		if (!product.getPartNo().equalsIgnoreCase(ps.getPartNo())) {
+		if(!product.getPartNo().equalsIgnoreCase(ps.getId().getPartNo())) {
 			throw new MismatchPartNumException();
 		}
 		if (product.getAvailableQty() < product.getReorderLevel()) {
@@ -112,21 +117,33 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return toOrderQty;
 	}
-//	@Transactional
-//	public void createOrders(User user, ArrayList<OrderCartItem> orderList ) {
-//		HashSet<String> supplierList = new HashSet<String>();
-//		for(OrderCartItem x:orderList) {
-//			supplierList.add(x.getSelectedSupplierId());
-//		}
-//		for(String supplierName:supplierList) {
-//			Supplier supplier = supplierRepository.findSupplierBysupplierId(supplierName);
-//			Order order=new Order();
-//			order.setSupplier(supplier);
-//			order.setUser(user);
-//			orderRepository.saveAndFlush(order);
-//			for()
-//			
-//			
-//		}
-//	}
+	@Transactional
+	public void logOrders(User user, ArrayList<OrderCartItem> orderList ) {
+		HashSet<Integer> supplierList = new HashSet<Integer>();
+		for(OrderCartItem x:orderList) {
+			supplierList.add(x.getSelectedSupplierId());
+		}
+		for(Integer supplierId:supplierList) {
+			Supplier supplier = supplierRepository.findSupplierBysupplierId(supplierId);
+			Order order=new Order();
+			order.setSupplier(supplier);
+			order.setUser(user);
+			orderRepository.saveAndFlush(order);
+			ArrayList<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
+			for(OrderCartItem orderCartItem:orderList) {
+				if(supplierId==orderCartItem.getSelectedSupplierId()) {
+					OrderDetail orderDetail = new OrderDetail();
+					OrderDetailId orderDetailId= new OrderDetailId();
+					orderDetailId.setOrderId(order.getOrderId());
+					orderDetailId.setPartNo(orderCartItem.getProduct().getPartNo());
+					orderDetail.setId(orderDetailId);
+					orderDetail.setTransactionQty(orderCartItem.getQuantity());
+					orderDetailList.add(orderDetail);
+				}
+			}
+			orderDetailRepository.save(orderDetailList);
+			orderDetailRepository.flush();
+		}
+		return;
+	}
 }

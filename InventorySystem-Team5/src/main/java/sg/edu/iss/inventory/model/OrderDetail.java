@@ -3,31 +3,24 @@ package sg.edu.iss.inventory.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
 
-@IdClass(OrderdetailId.class)
-@Table(name="orderdetail")
-public class OrderDetail implements Serializable{
+@IdClass(OrderDetailId.class)
+@Table(name = "orderdetail")
+public class OrderDetail implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name="orderId")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int orderId;
-	@Id
-	@Column(name="partNo")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String partNo;
-	@Column(name="transactionQty")
+	@EmbeddedId
+	private OrderDetailId id;
+
+	@Column(name = "transactionQty")
 	private int transactionQty;
 
 	public OrderDetail() {
@@ -35,27 +28,10 @@ public class OrderDetail implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderDetail(int orderId, String partNo, int transactionQty) {
+	public OrderDetail(OrderDetailId id, int transactionQty) {
 		super();
-		this.orderId = orderId;
-		this.partNo = partNo;
+		this.id = id;
 		this.transactionQty = transactionQty;
-	}
-
-	public int getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(int orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getPartNo() {
-		return partNo;
-	}
-
-	public void setPartNo(String partNo) {
-		this.partNo = partNo;
 	}
 
 	public int getTransactionQty() {
@@ -66,32 +42,12 @@ public class OrderDetail implements Serializable{
 		this.transactionQty = transactionQty;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((partNo == null) ? 0 : partNo.hashCode());
-		result = prime * result + orderId;
-		return result;
+	public OrderDetailId getId() {
+		return id;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OrderDetail other = (OrderDetail) obj;
-		if (partNo == null) {
-			if (other.partNo != null)
-				return false;
-		} else if (!partNo.equals(other.partNo))
-			return false;
-		if (orderId != other.orderId)
-			return false;
-		return true;
+	public void setId(OrderDetailId id) {
+		this.id = id;
 	}
 
 }
