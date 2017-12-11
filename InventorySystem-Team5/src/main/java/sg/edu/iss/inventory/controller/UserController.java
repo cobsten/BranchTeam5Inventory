@@ -3,11 +3,14 @@ package sg.edu.iss.inventory.controller;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import sg.edu.iss.inventory.model.User;
 import sg.edu.iss.inventory.service.UserService;
+import sg.edu.iss.inventory.validator.UserValidator;
 
 @RequestMapping(value="user")
 @Controller
@@ -22,6 +26,13 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	@Autowired
+	private UserValidator uValidator;
+
+/*	@InitBinder("user")
+	private void initUserBinder(WebDataBinder binder) {
+		binder.addValidators(uValidator);
+	}*/
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView userListPage() {
@@ -56,7 +67,11 @@ public class UserController {
 		model.addAttribute("user", new User());
 		return "login";
 	}
-	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(Model model,HttpSession session) {
+		session.invalidate();
+		return "redirect:/user/login";
+	}
 	
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ModelAndView authenticate(@ModelAttribute User user, HttpSession session, BindingResult result) {
@@ -65,11 +80,19 @@ public class UserController {
 			return mav;
 		UserSession us = new UserSession();
 		if (user.getUserId() != null && user.getPassword() != null) {
-			User u = userService.authenticate(user.getUserName(), user.getPassword());
-			us.setUser(u);
-			// PUT CODE FOR SETTING SESSION ID
-			us.setSessionId(session.getId());
-			mav = new ModelAndView("redirect:/user/list");
+			User u = userService.authenticate(user.getUserId(), user.getPassword());
+			if(u != null)
+			{
+				us.setUser(u);
+				// PUT CODE FOR SETTING SESSION ID
+				us.setSessionId(session.getId());
+				mav = new ModelAndView("redirect:/product/list");
+			}
+			else
+			{		
+				return mav;
+			}
+			
 		}
 		else
 		{		

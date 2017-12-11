@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Transactional
 	public User authenticate(String userId, String password) {
-		User u = userRepository.findUserByNamePwd(userId, password);
+		User u = userRepository.findUserByIdPwd(userId, password);
 		return u;
 	}
 	

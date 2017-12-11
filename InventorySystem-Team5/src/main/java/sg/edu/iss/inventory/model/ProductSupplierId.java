@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 public class ProductSupplierId implements Serializable{
 	
 	/**
-	 * 
+	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 

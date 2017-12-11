@@ -28,7 +28,7 @@ public class Order {
 	private Date orderDate;
 	@ManyToOne
 	@JoinColumn(name = "userId")
-	private  User user;
+	private  User userorder;
 	@ManyToOne
 	@JoinColumn(name = "supplierId")
 	private Supplier supplier;
@@ -38,11 +38,11 @@ public class Order {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Order(int orderId, Date orderDate, User user, Supplier supplier) {
+	public Order(int orderId, Date orderDate, User userorder, Supplier supplier) {
 		super();
 		this.orderId = orderId;
 		this.orderDate = orderDate;
-		this.user = user;
+		this.userorder = userorder;
 		this.supplier = supplier;
 	}
 
@@ -62,12 +62,12 @@ public class Order {
 		this.orderDate = orderDate;
 	}
 
-	public User getUser() {
-		return user;
+	public User getUserorder() {
+		return userorder;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserorder(User userorder) {
+		this.userorder = userorder;
 	}
 
 	public Supplier getSupplier() {
@@ -100,4 +100,5 @@ public class Order {
 		return true;
 	}
 
+	
 }
