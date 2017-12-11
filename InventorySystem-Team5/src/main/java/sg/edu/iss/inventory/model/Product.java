@@ -3,20 +3,17 @@ package sg.edu.iss.inventory.model;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "product")
-public class Product {	
-	
+public class Product {
+
 	@Id
 	@Column(name = "partNo")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	String partNo;
-	@Basic
+	@Basic(optional = false)
 	@Column(name = "carDealer")
 	String carDealer;
 	@Column(name = "partDescription")
@@ -31,13 +28,15 @@ public class Product {
 	int reorderLevel;
 	@Column(name = "shelfLocation")
 	String shelfLocation;
-	
+	@Column(name = "productStatus")
+	String productStatus;
+
 	public Product() {
-		super();
+
 	}
 
 	public Product(String partNo, String carDealer, String partDescription, int availableQty, String color,
-			String dimension, int reorderLevel, String shelfLocation) {
+			String dimension, int reorderLevel, String shelfLocation, String productStatus) {
 		super();
 		this.partNo = partNo;
 		this.carDealer = carDealer;
@@ -47,38 +46,7 @@ public class Product {
 		this.dimension = dimension;
 		this.reorderLevel = reorderLevel;
 		this.shelfLocation = shelfLocation;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((partNo == null) ? 0 : partNo.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		if (partNo == null) {
-			if (other.partNo != null)
-				return false;
-		} else if (!partNo.equals(other.partNo))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Product [partNo=" + partNo + ", carDealer=" + carDealer + ", partDescription=" + partDescription
-				+ ", availableQty=" + availableQty + ", color=" + color + ", dimension=" + dimension + ", reorderLevel="
-				+ reorderLevel + ", shelfLocation=" + shelfLocation + "]";
+		this.productStatus = productStatus;
 	}
 
 	public String getPartNo() {
@@ -144,4 +112,42 @@ public class Product {
 	public void setShelfLocation(String shelfLocation) {
 		this.shelfLocation = shelfLocation;
 	}
+
+	public String getProductStatus() {
+		return productStatus;
+	}
+
+	public void setProductStatus(String productStatus) {
+			this.productStatus = productStatus;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + availableQty;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (availableQty != other.availableQty)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [partNo=" + partNo + ", carDealer=" + carDealer + ", partDescription=" + partDescription
+				+ ", availableQty=" + availableQty + ", color=" + color + ", dimension=" + dimension + ", reorderLevel="
+				+ reorderLevel + ", shelfLocation=" + shelfLocation + ", productStatus=" + productStatus + "]";
+	}
+
 }
