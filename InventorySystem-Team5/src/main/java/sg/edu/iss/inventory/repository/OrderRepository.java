@@ -12,10 +12,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer>  {
 
 	@Query("SELECT o FROM Order o where o.orderId = :orderId")
 	Order findOrderByOrderId(@Param("orderId") String orderId);
-	
+/*	
 	@Query("SELECT o FROM Order o where o.userId = :userId")
 	ArrayList<Order> findOrderByUserId(@Param("userId") String userId);
 	
 	@Query("SELECT o FROM Order o where o.supplierId = :supplierId")
 	ArrayList<Order> findOrderBysupplierId(@Param("supplierId") String supplierId);
+	*/
 }
