@@ -5,15 +5,18 @@ import java.util.ArrayList;
 public class OrderCartItem {
 	Product product;
 	ArrayList<ProductSupplier> prodSupList;
+	String selectedSupplierId;
 	int quantity;
 
 	public OrderCartItem() {
 		super();
 	}
 
-	public OrderCartItem(Product product, ArrayList<ProductSupplier> prodSupList, int quantity) {
+	public OrderCartItem(Product product, ArrayList<ProductSupplier> prodSupList, String selectedSupplierId,
+			int quantity) {
 		this.product = product;
 		this.prodSupList = prodSupList;
+		this.selectedSupplierId = selectedSupplierId;
 		this.quantity = quantity;
 	}
 
@@ -31,6 +34,14 @@ public class OrderCartItem {
 
 	public void setProdSupList(ArrayList<ProductSupplier> prodSupList) {
 		this.prodSupList = prodSupList;
+	}
+
+	public String getSelectedSupplierId() {
+		return selectedSupplierId;
+	}
+
+	public void setSelectedSupplierId(String selectedSupplierId) {
+		this.selectedSupplierId = selectedSupplierId;
 	}
 
 	public int getQuantity() {

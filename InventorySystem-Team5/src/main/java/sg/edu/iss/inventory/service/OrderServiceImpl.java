@@ -34,8 +34,7 @@ public class OrderServiceImpl implements OrderService {
 				ArrayList<ProductSupplier> psList = productSupplierRepository
 						.findProductSupplierByProductId(x.getPartNo());
 				if (!psList.isEmpty()) {
-					OrderCartItem orderCartItem = new OrderCartItem(x, psList, 0);
-					orderCartItem.setQuantity(qtyLowUnitPrice(orderCartItem));
+					OrderCartItem orderCartItem = getLowPriceItem(x,psList);
 					orderList.add(orderCartItem);
 				}
 			}
@@ -52,8 +51,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			else {
 				ArrayList<ProductSupplier> psList = productSupplierRepository.findProductSupplierByProductId(product.getPartNo());
-				OrderCartItem orderCartItem = new OrderCartItem(product,psList,0);
-				orderCartItem.setQuantity(qtyLowUnitPrice(orderCartItem));
+				OrderCartItem orderCartItem=getLowPriceItem(product,psList);
 				orderList.add(orderCartItem);
 			}
 		}
@@ -72,19 +70,19 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	@Transactional
-	public int qtyLowUnitPrice(OrderCartItem orderCartItem) throws MismatchPartNumException {
+	public OrderCartItem getLowPriceItem(Product product, ArrayList<ProductSupplier> prodSupList) throws MismatchPartNumException {
 		ProductSupplier prodSup = null;
 		int qty=0;
-		if (orderCartItem.getProdSupList().isEmpty()) {throw new MismatchPartNumException();}
+		if (prodSupList.isEmpty()) {throw new MismatchPartNumException();}
 		else {
-			for (ProductSupplier ps : orderCartItem.getProdSupList()) {
+			for (ProductSupplier ps : prodSupList) {
 				if (prodSup == null || prodSup.getUnitPrice() > ps.getUnitPrice()) {
 					prodSup = ps;
 				}
 			}
-			qty=computeQty(orderCartItem.getProduct(), prodSup);
+			qty=computeQty(product, prodSup);
 		}
-		return qty;
+		return new OrderCartItem(product,prodSupList,prodSup.getSupplierId(),qty);
 		
 	}
 	

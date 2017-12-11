@@ -17,7 +17,8 @@ public interface OrderService {
 
 	public void removeListItem(String partNum, ArrayList<OrderCartItem> orderList);
 
-	public int qtyLowUnitPrice(OrderCartItem orderCartItem) throws MismatchPartNumException;
-
 	public int computeQty(Product product, ProductSupplier ps) throws MismatchPartNumException;
+
+	public OrderCartItem getLowPriceItem(Product product, ArrayList<ProductSupplier> prodSupList)
+			throws MismatchPartNumException;
 }
