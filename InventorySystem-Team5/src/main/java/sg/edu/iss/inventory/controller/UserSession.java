@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import sg.edu.iss.inventory.model.OrderItem;
+import sg.edu.iss.inventory.model.OrderCartItem;
 import sg.edu.iss.inventory.model.User;
 
 @Component
@@ -15,7 +15,7 @@ public class UserSession {
 
 	private String sessionId = null;
 	private User user = null;
-	private ArrayList<OrderItem> orderList = null;
+	private ArrayList<OrderCartItem> orderList = null;
 	
 	public UserSession() {
 		super();
@@ -43,11 +43,11 @@ public class UserSession {
 		this.user = user;
 	}
 
-	public ArrayList<OrderItem> getOrderList() {
+	public ArrayList<OrderCartItem> getOrderList() {
 		return orderList;
 	}
 
-	public void setOrderList(ArrayList<OrderItem> orderList) {
+	public void setOrderList(ArrayList<OrderCartItem> orderList) {
 		this.orderList = orderList;
 	}
 
