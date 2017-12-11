@@ -12,17 +12,18 @@
 </head>
 <body>
 
-	<h4>Product List Page</h4>
+	<h3>Product List Page</h3>
 
 	<form:form modelAttribute="product" method="POST"
 		action="${pageContext.request.contextPath}/product/search">
 		
 		<table >
 			<tr>
-			<td><spring:message code="partNo" /></td>
-				<td><form:input path="partNo" /></td>
-				<td><form:errors path="partNo" cssStyle="color: red;" /></td>
-			<td></td>				
+				<td><spring:message code="product.partNo" /></td>
+				<td><form:input path="partNo" size="20" /></td>
+			<td></td>
+				<td><spring:message code="product.shelfLocation" /></td>
+				<td><form:input path="shelfLocation" size="20" /></td>
 			</tr>
 			<tr>
 				<td><spring:message code="product.carDealer" /></td>
@@ -44,7 +45,15 @@
 				</c:forEach>
 			</tr>
 
-			
+			<tr>
+				<td><spring:message code="product.color" /></td>
+
+				<c:forEach var="product" items="${colorList}" varStatus="mapIndex">
+
+					<td><input type="checkbox" id="chk${mapIndex.index}"
+						name="chk${mapIndex.index}" /> ${product}</td>
+				</c:forEach>
+			</tr>	
 		</table>
 
 		<form:button name="submit" type="submit" value="Search">
@@ -63,6 +72,10 @@
 					<th><spring:message code="product.partNo" /></th>
 					<th><spring:message code="product.carDealer" /></th>
 					<th><spring:message code="product.partDescription" /></th>
+					<th><spring:message code="product.availableQty" /></th>
+					<th><spring:message code="product.color" /></th>
+					<th><spring:message code="product.dimension" /></th>
+					<th><spring:message code="product.reorderLevel" /></th>
 					<th><spring:message code="product.shelfLocation" /></th>
 				</tr>
 			</thead>
@@ -72,6 +85,10 @@
 						<td align="left">${product.partNo}</td>
 						<td align="left">${product.carDealer}</td>
 						<td align="left">${product.partDescription}</td>
+						<td align="left">${product.availableQty}</td>
+						<td align="left">${product.color}</td>
+						<td align="left">${product.dimension}</td>
+						<td align="left">${product.reorderLevel}</td>
 						<td align="left">${product.shelfLocation}</td>
 						<td align="center"><a
 							href="${pageContext.request.contextPath}/product/detail/${product.partNo}.html"><spring:message

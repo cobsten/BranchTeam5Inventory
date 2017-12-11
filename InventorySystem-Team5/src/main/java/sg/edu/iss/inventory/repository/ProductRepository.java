@@ -22,9 +22,11 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 	@Query("SELECT distinct p.color FROM Product p WHERE p.productStatus='Valid'")
 	ArrayList<Product> findColor();		
 	
+	@Query("SELECT p FROM Product p WHERE p.availableQty <= p.reorderLevel")
+	ArrayList<Product> findReorderProduct();
+	
 	@Query("SELECT p FROM Product p WHERE p.partNo =:partNo and p.productStatus='Valid'")
 	Product findProductByPartNo(@Param("partNo") String partNo);
-	
 	
 	//search query
 	@Query("SELECT p FROM Product p WHERE p.partNo LIKE %:partNo% and p.productStatus='Valid'")

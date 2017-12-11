@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	public ArrayList<OrderCartItem> createToOrderList() throws MismatchPartNumException {
 		ArrayList<OrderCartItem> orderList = new ArrayList<OrderCartItem>();
-		ArrayList<Product> prodList = productRepository.findProductsToReorder();
+		ArrayList<Product> prodList = productRepository.findReorderProduct();
 		if (!prodList.isEmpty()) {
 			for (Product x : prodList) {
 				ArrayList<ProductSupplier> psList = productSupplierRepository
@@ -127,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
 			Supplier supplier = supplierRepository.findSupplierBysupplierId(supplierId);
 			Order order=new Order();
 			order.setSupplier(supplier);
-			order.setUser(user);
+			order.setUserorder(user);
 			orderRepository.saveAndFlush(order);
 			ArrayList<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 			for(OrderCartItem orderCartItem:orderList) {
