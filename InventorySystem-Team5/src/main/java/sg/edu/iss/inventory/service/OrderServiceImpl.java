@@ -1,7 +1,6 @@
 package sg.edu.iss.inventory.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
 	@Resource
 	private ProductSupplierRepository productSupplierRepository;
 
+	@Override
+	@Transactional
 	public ArrayList<OrderCartItem> createToOrderList() throws MismatchPartNumException {
 		ArrayList<OrderCartItem> orderList = new ArrayList<OrderCartItem>();
 		ArrayList<Product> prodList = productRepository.findProductsToReorder();
@@ -41,9 +42,9 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return orderList;
 	}
-
+	@Override
 	@Transactional
-	public void addToOrderList(String partNum, ArrayList<OrderCartItem> orderList)throws DuplicatePartNumException,MismatchPartNumException{
+	public void addListItem(String partNum, ArrayList<OrderCartItem> orderList)throws DuplicatePartNumException,MismatchPartNumException{
 		Product product = productRepository.findProductByPartNo(partNum);
 		for(OrderCartItem x:orderList) {
 			if(x.getProduct().getPartNo().equalsIgnoreCase(product.getPartNo())) {
@@ -58,8 +59,18 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return;
 	}
+	@Override
+	@Transactional
+	public void removeListItem(String partNum, ArrayList<OrderCartItem> orderList) {
+		for(OrderCartItem orderCartItem:orderList) {
+			if(orderCartItem.getProduct().getPartNo().equalsIgnoreCase(partNum)) {
+				orderList.remove(orderCartItem);
+			}
+		}
+		return;
+	}
 	
-
+	@Override
 	@Transactional
 	public int qtyLowUnitPrice(OrderCartItem orderCartItem) throws MismatchPartNumException {
 		ProductSupplier prodSup = null;
@@ -76,7 +87,9 @@ public class OrderServiceImpl implements OrderService {
 		return qty;
 		
 	}
-
+	
+	@Override
+	@Transactional
 	public int computeQty(Product product, ProductSupplier ps) throws MismatchPartNumException {
 		// TODO Auto-generated method stub
 		// for Cheapest
