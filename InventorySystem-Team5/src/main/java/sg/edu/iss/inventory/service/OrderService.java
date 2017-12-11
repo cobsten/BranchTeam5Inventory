@@ -12,7 +12,7 @@ public interface OrderService {
 
 	public ArrayList<OrderCartItem> createToOrderList() throws MismatchPartNumException;
 
-	public void addToOrderList(Product product, ArrayList<OrderCartItem> orderList)
+	public void addToOrderList(String partNum, ArrayList<OrderCartItem> orderList)
 			throws DuplicatePartNumException, MismatchPartNumException;
 
 	public int qtyLowUnitPrice(OrderCartItem orderCartItem) throws MismatchPartNumException;

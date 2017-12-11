@@ -43,7 +43,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Transactional
-	public void addToOrderList(Product product, ArrayList<OrderCartItem> orderList)throws DuplicatePartNumException,MismatchPartNumException{
+	public void addToOrderList(String partNum, ArrayList<OrderCartItem> orderList)throws DuplicatePartNumException,MismatchPartNumException{
+		Product product = productRepository.findProductByPartNo(partNum);
 		for(OrderCartItem x:orderList) {
 			if(x.getProduct().getPartNo().equalsIgnoreCase(product.getPartNo())) {
 				throw new DuplicatePartNumException();
