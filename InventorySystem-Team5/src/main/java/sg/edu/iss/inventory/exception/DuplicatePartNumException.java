@@ -10,4 +10,8 @@ public class DuplicatePartNumException extends Exception {
 	public DuplicatePartNumException() {
 		super();
 	}
+
+	public DuplicatePartNumException(String string) {
+		super(string);
+	}
 }

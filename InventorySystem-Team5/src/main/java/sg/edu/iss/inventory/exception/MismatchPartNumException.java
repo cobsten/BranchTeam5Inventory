@@ -9,4 +9,8 @@ public class MismatchPartNumException extends Exception{
 	public MismatchPartNumException() {
 		super();
 	}
+
+	public MismatchPartNumException(String string) {
+		super(string);
+	}
 }
