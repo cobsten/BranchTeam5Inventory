@@ -38,9 +38,8 @@ public class Order {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Order(int orderId, Date orderDate, User userorder, Supplier supplier) {
+	public Order(Date orderDate, User userorder, Supplier supplier) {
 		super();
-		this.orderId = orderId;
 		this.orderDate = orderDate;
 		this.userorder = userorder;
 		this.supplier = supplier;

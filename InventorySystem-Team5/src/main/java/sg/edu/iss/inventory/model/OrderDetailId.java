@@ -21,6 +21,10 @@ public class OrderDetailId  implements Serializable{
 	public OrderDetailId() {
 		super();
 	}
+	public OrderDetailId(String partNo, int orderId) {
+		this.partNo=partNo;
+		this.orderId=orderId;
+	}
 	public String getPartNo() {
 		return partNo;
 	}

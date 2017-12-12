@@ -1,6 +1,8 @@
 package sg.edu.iss.inventory.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 
 import javax.annotation.Resource;
@@ -125,19 +127,12 @@ public class OrderServiceImpl implements OrderService {
 		}
 		for(Integer supplierId:supplierList) {
 			Supplier supplier = supplierRepository.findSupplierBysupplierId(supplierId);
-			Order order=new Order();
-			order.setSupplier(supplier);
-			order.setUserorder(user);
+			Order order=createOrder(user,supplier);
 			orderRepository.saveAndFlush(order);
 			ArrayList<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 			for(OrderCartItem orderCartItem:orderList) {
 				if(supplierId==orderCartItem.getSelectedSupplierId()) {
-					OrderDetail orderDetail = new OrderDetail();
-					OrderDetailId orderDetailId= new OrderDetailId();
-					orderDetailId.setOrderId(order.getOrderId());
-					orderDetailId.setPartNo(orderCartItem.getProduct().getPartNo());
-					orderDetail.setId(orderDetailId);
-					orderDetail.setTransactionQty(orderCartItem.getQuantity());
+					OrderDetail orderDetail = createOrderDetail(orderCartItem.getProduct().getPartNo(),order.getOrderId(),orderCartItem.getQuantity());
 					orderDetailList.add(orderDetail);
 				}
 			}
@@ -146,4 +141,15 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return;
 	}
+	public Order createOrder(User userorder, Supplier supplier) {
+		Date date = Calendar.getInstance().getTime();
+		Order order = new Order(date,userorder,supplier);
+		return order;
+	}
+	public OrderDetail createOrderDetail(String partNo,int orderId,int transactionQty) {
+		OrderDetailId id= new OrderDetailId(partNo,orderId);
+		OrderDetail orderDetail = new OrderDetail(id,transactionQty);
+		return orderDetail;
+	}
+	
 }
